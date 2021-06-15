@@ -1,0 +1,210 @@
+#
+# System Hotkeys
+#
+
+# Terminal (kitty)
+super + Return
+    kitty
+
+# Rofi drun
+super + @space
+    rofi -show drun -columns 1 -lines 20
+
+# Rofi power menu
+super + Escape
+    ~/.config/bspwm/scripts/power-menu.sh
+
+# Rofi calculator
+super + equal
+    rofi -show calc -modi calc -no-show-match -no-sort
+
+# Rofi emoji menu
+super + period
+    rofi -show emoji -modi emoji
+
+# Reload sxhkd configuration
+super + shift + Escape
+    pkill -USR1 -x sxhkd
+
+# Lock screen immediately
+super + l
+    betterlockscreen -l blur -t "Locked"
+
+super + shift + s
+    deepin-screenshot -n
+#
+# bspwm
+#
+
+# Restart bspwm
+super + alt + r
+    bspc wm -r
+
+super + ctrl + r
+   ~/.scripts/launchPolybar.sh
+
+# Close/Kill(shift) focused window
+super + {_,shift + }w
+    bspc node -{c,k}
+
+#
+# States & Flags
+#
+
+# Set Window State
+super + {t,s,F11}
+    bspc node -t {tiled,floating,fullscreen}
+
+# Toggle Node Flags
+super + ctrl + {x,y,z}
+    bspc node -g {locked,sticky,private}
+
+#
+# Focus & Move
+#
+
+# Focus the next or previous node in desktop
+super + shift + {n,p}
+    bspc node -f {next,prev}.local
+
+# Focus a desktop, or send window to desktop
+super + {_,shift + }{1-9,0}
+    bspc {desktop -f, node -d} {I,II,III,IV,V,VI,VII,VIII,IX,X}
+
+# Chord chains used for left/right monitors
+super + grave; {_,shift + }{1-6}
+    bspc {desktop -f, node -d} {XI,XII,XIII,XIV,XV,XVI}
+
+# Monitor Layouts
+super + F1
+    ~/.scripts/threeScreenLayout.sh 
+super + F2
+    ~/.scripts/twoScreenLayout.sh
+super + F3
+    ~/.scripts/wingLayout.sh
+
+#
+# Preselection
+#
+
+# Preselect direction for next window
+super + ctrl + {Left,Down,Up,Right}
+    bspc node -p {west,south,north,east}
+
+# Preselect ratio for next window
+super + ctrl + {1-9}
+    bspc node -o 0.{1-9}
+
+# Cancel preselection on focused desktop
+super + ctrl + space
+    bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+#
+# move/resize
+#
+
+# Expand focused window
+super + alt + {Left,Down,Up,Right}
+    bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# Contract focused window
+super + alt + shift + {Left,Down,Up,Right}
+    bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# Move floating window
+super + {Left,Down,Up,Right}
+    bspc node -v {-20 0,0 20,0 -20,20 0}
+
+#
+# Application Hotkeys
+#
+
+super + i
+    chromium
+
+super + shift + i
+    google-chrome-stable
+
+super + c
+    code
+
+super + shift + c
+    code-insiders
+
+super + shift + d
+    discord
+
+super + f
+    firefox
+
+Print
+    scrot -u
+
+super + XF86AudioPlay
+    spotify
+
+super + XF86AudioRaiseVolume
+    pavucontrol
+
+ctrl + Print
+    teiler --quickcopy area
+
+super + shift + t
+    telegram-desktop
+
+super + m
+    thunar
+
+super + F12
+    ~/.scripts/launchJellyfinMPVShim.sh
+
+#
+# Media Keys
+#
+
+XF86AudioPlay
+    playerctl play-pause
+
+XF86AudioStop
+    playerctl stop
+
+XF86AudioNext
+    playerctl next
+
+XF86AudioPrev
+    playerctl previous
+
+XF86AudioMute
+    pactl set-sink-mute @DEFAULT_SINK@ toggle
+
+XF86Audio{Raise,Lower}Volume
+    pactl set-sink-volume @DEFAULT_SINK@ {+5%,-5%}
+
+# Scratch Pad
+super + minus
+    id=$(bspc query -N -n "focused");\
+    if [ -n "$id" ];then \
+        xprop -id $id -f _SCRATCH 32ii -set _SCRATCH $(date +%s,%N);\
+        bspc node -t "floating";\
+        xdotool windowunmap $id;\
+    fi
+
+super + shift + minus
+    i=$(bspc query -N -n "focused.floating");\
+    if [ -n "$i" ];then \
+        xprop -id $i -f _SCRATCH 32ii -set _SCRATCH $(date +%s,%N);\
+        xdotool windowunmap $i;\
+    else;\
+        i=$(for w in $(xwininfo -root -children | grep -e "^\s*0x[0-9a-f]\+" -o);do \
+            t=$(xprop -id $w _SCRATCH | grep ' = \(.*\)');\
+            if [ -n "$t" ];then \
+                echo $t $w;\
+            fi;\
+        done|sort -n|head -n1|cut -d" " -f 5);\
+        if [ -n "$i" ];then \
+            xprop -id $i -remove _SCRATCH;\
+            bspc rule -a \* state=tiled --one-shot;\
+            xdotool windowmap $i;\
+            bspc node -f $i;\
+        fi;\
+    fi

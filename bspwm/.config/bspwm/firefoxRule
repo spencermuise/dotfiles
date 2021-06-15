@@ -1,0 +1,12 @@
+#!/bin/bash
+wid="$1"
+class="$2"
+
+case "$class" in
+	Firefox )
+		case "$(xprop -id "$wid" _NET_WM_WINDOW_TYPE)" in
+			*_NET_WM_WINDOW_TYPE_NORMAL* ) echo "state=tiled" ;;
+		esac
+		;;
+esac
+

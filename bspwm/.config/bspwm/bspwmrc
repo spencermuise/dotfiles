@@ -1,0 +1,31 @@
+#! /bin/sh
+
+#
+# Autostart
+#
+
+export SXHKD_SHELL=sh
+~/.scripts/launchPolybar.sh &
+~/.scripts/launchPicom.sh &
+
+sxhkd & # Start sxhkd
+xset s 3600 3600 & # Set screensaver time to 1 hour
+xset dpms 3600 3600 3600 & # Set screen blank time to 1 hour
+
+#
+# Monitors & Desktops
+#
+
+bspc monitor DVI-D-0 -d XV XVI XVII XVIII
+bspc monitor HDMI-0 -d I II III IV V VI VII VIII IX X
+bspc monitor DP-5 -d XI XII XIII XIV
+
+#
+# Other Configuration
+#
+
+bspc config border_width         0
+bspc config window_gap          12
+bspc config split_ratio          0.50
+bspc config focus_follows_pointer true
+bspc config top_padding 25
