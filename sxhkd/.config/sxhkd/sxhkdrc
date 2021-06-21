@@ -20,7 +20,7 @@ super + equal
 
 # Rofi emoji menu
 super + period
-    rofi -show emoji -modi emoji
+    emote
 
 # Reload sxhkd configuration
 super + shift + Escape
