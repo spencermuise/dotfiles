@@ -9,7 +9,9 @@ xsetroot -cursor_name left_ptr &
 ~/.fehbg &
 ~/.scripts/mainScreenLayout.sh &
 ~/.scripts/launchPolybar.sh &
+flashfocus &
 ~/.scripts/launchPicom.sh &
+hydroxide -carddav-port 8285 serve &
 sxhkd & # Start sxhkd
 xset s 3600 3600 & # Set screensaver time to 1 hour
 xset dpms 3600 3600 3600 & # Set screen blank time to 1 hour
